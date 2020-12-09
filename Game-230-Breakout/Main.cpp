@@ -1,6 +1,7 @@
 // These "include" code from the C++ library and SFML too
 #include "Paddle.h"
 #include "Ball.h"
+#include"Brick.h"
 #include"Menu.h"
 //#include"Obstacle.h" Change to bricks
 #include <sstream>
@@ -109,7 +110,8 @@ int main()
     // create a ball - place ball on paddle and make it move with paddle. 
     Ball ball(windowWidth * 0.5f, 1);
 
-    //create bricks
+    // create bricks
+    Brick brick[];
 
     // Create a "Text" object called "message". Weird but we will learn about objects soon
     Text hud;
