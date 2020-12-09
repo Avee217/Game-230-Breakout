@@ -12,8 +12,11 @@ private:
     //change speeds
     RectangleShape ballShape;
 
-    float xVelocity = 5.0f;
-    float yVelocity = 5.0f;
+    float xVelocity = 50.0f;
+    float yVelocity = 50.0f;
+    float width = 10.0f;
+    float height = 10.0f;
+    
 
 public:
     Ball(float startX, float startY);
@@ -26,10 +29,11 @@ public:
 
     void reboundSides();
 
-    void reboundPaddleOrTop();
-
+    void reboundPaddle(float paddleX,float paddleWidth);
+    void reboundTop();
     void hitBottom();
 
-    void update();
+    void update(float timeElapsed);
+    void reset(float startX,float startY);
 
 };

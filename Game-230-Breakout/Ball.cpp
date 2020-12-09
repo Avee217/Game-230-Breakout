@@ -30,11 +30,19 @@ void Ball::reboundSides()
 }
 // split  and change pos y reset val
 
-void Ball::reboundPaddleOrTop()
+void Ball::reboundPaddle(float paddleX, float paddleWidth) 
 {
-    position.y -= (yVelocity * 30);
+    float paddleHitPos = (position.x - paddleX) / (paddleWidth / 2);
+    yVelocity = abs(yVelocity) + 50;
+    if (yVelocity > 400) yVelocity = 400;
     yVelocity = -yVelocity;
+    xVelocity = -100 * (1.0f - paddleHitPos);
 
+}
+
+void Ball::reboundTop()
+{
+    yVelocity = -yVelocity;
 }
 
 void Ball::hitBottom()
@@ -43,12 +51,22 @@ void Ball::hitBottom()
     position.x = 500;
 }
 
-void Ball::update()
+void Ball::update(float timeElapsed)
 {
     // Update the ball position variables
-    position.y += yVelocity;
-    position.x += xVelocity;
+    position.y += yVelocity * timeElapsed;
+    position.x += xVelocity * timeElapsed;
 
     // Move the ball and the bat
     ballShape.setPosition(position);
+}
+void Ball::reset(float startX, float startY)
+{
+    position.x = startX;
+    position.y = startY;
+    if (xVelocity < 0)
+        xVelocity = -100.0f;
+    else
+        xVelocity = 100.0f;
+    yVelocity = 0.0f;
 }

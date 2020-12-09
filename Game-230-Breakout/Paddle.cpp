@@ -2,11 +2,13 @@
 
 // This the constructor and it is called when we create an object
 Paddle::Paddle(float startX, float startY)
-{
-    position.x = startX;
+{   
+    paddleHeight = 5;
+    paddleWidth = 100;
+    position.x = startX-paddleHeight/2.0f;
     position.y = startY;
     // change speeds
-    paddleShape.setSize(sf::Vector2f(50, 5));
+    paddleShape.setSize(sf::Vector2f(100, 5));
     paddleShape.setPosition(position);
 }
 FloatRect Paddle::getPosition()
@@ -19,17 +21,24 @@ RectangleShape Paddle::getShape()
     return paddleShape;
 }
 
-void Paddle::moveLeft()
+void Paddle::moveLeft(float timerElapsed)
 {
-    position.x -= paddleSpeed;
+    if(position.x>=0)
+        position.x -= paddleSpeed*timerElapsed;
 }
 
-void Paddle::moveRight()
+void Paddle::moveRight(float timeElapased)
 {
-    position.x += paddleSpeed;
+    if(position.x<= 800-paddleWidth)
+        position.x += paddleSpeed*timeElapased;
 }
 
-void Paddle::update()
+void Paddle::update(float timerElapsed)
 {
     paddleShape.setPosition(position);
+}
+void Paddle::reset(float startX, float startY)
+{
+    position.x = startX;
+    position.y = startY;
 }

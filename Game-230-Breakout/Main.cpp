@@ -34,12 +34,64 @@ int main()
     RenderWindow window(VideoMode(windowWidth, windowHeight), "Breakout!");
     window.setFramerateLimit(30); // set FPS Limit
 
+    Menu menu(windowWidth, windowHeight);
+
     //Flags for game states 
+    bool gameRunning = false;
+    bool pause = false;
+    bool resetGame = false;
 
     int score = 0;
     int lives = 3;
 
     //Load Sound files Add error checks 
+    SoundBuffer bumpBuffer;
+    if (!bumpBuffer.loadFromFile("Sounds/Bump.wav")) {
+        std::cout << "Bump Sound Error" << std::endl;
+    }
+    Sound bump(bumpBuffer);
+    bump.setVolume(50);
+
+    SoundBuffer scoreBuffer;
+    if (!scoreBuffer.loadFromFile("Sounds/Score.wav")) {
+        std::cout << "Score Sound Error" << std::endl;
+    }
+    Sound scoreSound(scoreBuffer);
+    scoreSound.setVolume(50);
+
+    // Music
+    Music backgroundMusic;
+    if (!backgroundMusic.openFromFile("Music/BackgroundMusic.wav")) {
+        std::cout << "Background Music Error" << std::endl;
+    }
+    backgroundMusic.setVolume(25);
+
+
+    Music menuMusic;
+    if (!menuMusic.openFromFile("Music/MenuMusic.wav")) {
+        std::cout << "Menu Music Error" << std::endl;
+    }
+    menuMusic.setVolume(25);
+
+    Music victoryMusic;
+    if (!victoryMusic.openFromFile("Music/VictoryMusic.wav")) {
+        std::cout << "Menu Music Error" << std::endl;
+    }
+    victoryMusic.setVolume(25);
+
+    // Load backgound
+    Texture texture1;
+    if (!texture1.loadFromFile("Images/pong1.png")) {
+        std::cout << "background Image Error" << std::endl;
+    }
+    Sprite	 background, menuBackGround;
+    background.setTexture(texture1);
+
+    Texture texture2;
+    if (!texture2.loadFromFile("Images/pong.png")) {
+        std::cout << "background 2 Image Error" << std::endl;
+    }
+    menuBackGround.setTexture(texture2);
 
     //Load Music
 
@@ -75,6 +127,12 @@ int main()
 
     // Choose a color
     hud.setFillColor(sf::Color::White);
+    hud.setPosition((windowWidth / 2.0f) - 40, 20);
+
+    menuMusic.play();
+    menuMusic.setLoop(true);
+
+    
     // This "while" loop goes round and round- perhaps forever
     while (window.isOpen())
     {   //Check if menu screen
@@ -104,12 +162,12 @@ int main()
         if (Keyboard::isKeyPressed(Keyboard::Left))
         {
             // move left...
-            paddle.moveLeft();
+            paddle.moveLeft(timeElapsed);
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right))
         {
             // move right...
-            paddle.moveRight();
+            paddle.moveRight(timeElapsed);
         }
         else if (Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
@@ -147,7 +205,7 @@ int main()
         // Handle ball hitting top
         if (ball.getPosition().top < 0)
         {
-            ball.reboundPaddleOrTop();
+            ball.reboundTop();
 
             // Add a point to the players score
             score++;
@@ -164,11 +222,11 @@ int main()
         if (ball.getPosition().intersects(paddle.getPosition()))
         {
             // Hit detected so reverse the ball and score a point
-            ball.reboundPaddleOrTop();
+            ball.reboundPaddle(paddle.getPosition().left,paddle.getPosition().width);
         }
 
-        ball.update();
-        paddle.update();
+        ball.update(timeElapsed);
+        paddle.update(timeElapsed);
 
         // Update the HUD text
         std::stringstream ss;
