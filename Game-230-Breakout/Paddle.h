@@ -9,6 +9,8 @@ private:
     Vector2f position;
     float paddleHeight;
     float paddleWidth;
+    Texture paddleTexture;
+    Sprite paddleSprite;
 
     // A RectangleShape object
     RectangleShape paddleShape;
@@ -21,6 +23,7 @@ public:
     //void setSpeed(float speed);
 
     FloatRect getPosition();
+    Sprite getSprite();
 
     RectangleShape getShape();
 

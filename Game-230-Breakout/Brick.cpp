@@ -7,11 +7,14 @@ Brick::Brick()
     brickHeight = 20;
     brickWidth = 70;
     brickHealth = 0;
+    //brickTexture.loadFromFile("Sprites/Brick.png");
+    //brickSprite.setTexture(brickTexture);
   
 
     brickShape.setSize(sf::Vector2f(brickWidth, brickHeight));
     brickShape.setFillColor(sf::Color::Color(255, 0, 0, 255));
-    //brickShape.setPosition(position);
+    //brickShape.setTexture(&brickTexture);
+    brickShape.setPosition(position);
 }
 void Brick::setPosition(float startX, float startY)
 {
@@ -28,6 +31,7 @@ float Brick::getHealth()
 {
     return brickHealth;
 }
+
 
 //void Brick::setSpeed(float speed)
 //{

@@ -5,18 +5,32 @@ Ball::Ball(float startX, float startY)
 {
     position.x = startX-width/2.0f;
     position.y = startY;
+    //ballTexture.loadFromFile("Sprites/Ball.png");
+    //ballSprite.setTexture(ballTexture);
+    //ballShape.setTexture(&ballTexture);
 
-    ballShape.setSize(sf::Vector2f(10, 10));
+
+    ballShape.setSize(sf::Vector2f(height, width));
     ballShape.setPosition(position);
+    ballSprite.setPosition(position);
 }
 FloatRect Ball::getPosition()
 {
     return ballShape.getGlobalBounds();
 }
 
+void Ball::Draw(sf::RenderTarget &Target) const
+{
+    Target.draw(ballSprite);
+}
+
 RectangleShape Ball::getShape()
 {
     return ballShape;
+}
+Sprite Ball::getSprite()
+{
+    return ballSprite;
 }
 
 float Ball::getXVelocity()
@@ -49,7 +63,7 @@ void Ball::reboundSides()
 void Ball::reboundPaddle(float paddleX, float paddleWidth) 
 {
     float paddleHitPos = (position.x - paddleX) / (paddleWidth / 2);
-    yVelocity = abs(yVelocity) + 50;
+    //yVelocity = abs(yVelocity) + 50;
     if (yVelocity > 400) yVelocity = 400;
     yVelocity = -yVelocity;
     xVelocity = -100 * (1.0f - paddleHitPos);
@@ -113,6 +127,7 @@ void Ball::update(float timeElapsed)
 
     // Move the ball and the bat
     ballShape.setPosition(position);
+    ballSprite.setPosition(position);
 }
 void Ball::reset(float startX, float startY)
 {

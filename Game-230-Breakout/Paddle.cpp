@@ -3,17 +3,25 @@
 // This the constructor and it is called when we create an object
 Paddle::Paddle(float startX, float startY)
 {   
-    paddleHeight = 5;
+    paddleHeight = 15;
     paddleWidth = 100;
     position.x = startX-paddleWidth/2.0f;
     position.y = startY;
+    paddleTexture.loadFromFile("Sprites/Paddle.png");
+    paddleSprite.setTexture(paddleTexture);
     // change speeds
-    paddleShape.setSize(sf::Vector2f(100, 5));
+    paddleShape.setSize(sf::Vector2f(paddleWidth, paddleHeight));
+    paddleShape.setTexture(&paddleTexture);
     paddleShape.setPosition(position);
+    paddleSprite.setPosition(position);
 }
 FloatRect Paddle::getPosition()
 {
     return paddleShape.getGlobalBounds();
+}
+
+Sprite Paddle::getSprite() {
+    return paddleSprite;
 }
 
 RectangleShape Paddle::getShape()
@@ -36,6 +44,7 @@ void Paddle::moveRight(float timeElapased)
 void Paddle::update(float timerElapsed)
 {
     paddleShape.setPosition(position);
+    paddleSprite.setPosition(position);
 }
 void Paddle::reset(float startX, float startY)
 {

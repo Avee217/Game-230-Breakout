@@ -10,6 +10,8 @@ private:
     float brickHeight;
     float brickWidth;
     float brickHealth;
+    //Texture brickTexture;
+    Sprite brickSprite;
 
     RectangleShape brickShape;
 

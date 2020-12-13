@@ -14,16 +14,22 @@ private:
 
     float xVelocity = 0.0f;
     float yVelocity = 0.0f;
-    float width = 10.0f;
-    float height = 10.0f;
+    float width = 15.0f;
+    float height = 15.0f;
+    //Texture ballTexture;
+    Sprite ballSprite;
+
+
     
 
 public:
     Ball(float startX, float startY);
 
+    void Draw(RenderTarget& target)const;
     FloatRect getPosition();
 
     RectangleShape getShape();
+    Sprite getSprite();
 
     float getXVelocity();
 
