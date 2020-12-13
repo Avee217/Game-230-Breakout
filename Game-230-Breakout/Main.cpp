@@ -3,7 +3,6 @@
 #include "Ball.h"
 #include"Brick.h"
 #include"Menu.h"
-//#include"Obstacle.h" Change to bricks
 #include <sstream>
 #include<iostream>
 #include <cstdlib>
@@ -23,8 +22,10 @@ using namespace sf;
 // This is where our game starts from
 int main()
 {
-    int windowWidth = 800;
-    int windowHeight = 600;
+    float windowWidth = 800.0f;
+    float windowHeight = 600.0f;
+
+    int i, j;
    
 
     std::chrono::steady_clock::time_point clockStart = std::chrono::steady_clock::now();
@@ -41,6 +42,7 @@ int main()
     bool gameRunning = false;
     bool pause = false;
     bool resetGame = false;
+    bool ballStart = false;
 
     int score = 0;
     int lives = 3;
@@ -108,10 +110,23 @@ int main()
     Paddle paddle(windowWidth *0.5f, windowHeight - 20.0f);
 
     // create a ball - place ball on paddle and make it move with paddle. 
-    Ball ball(windowWidth * 0.5f, 1);
+    Ball ball(windowWidth * 0.5f, windowHeight-30.0f);
+    ball.setYVelocity(0);
+    ball.setXVelocity(0);
 
     // create bricks
-    Brick brick[];
+    Brick brick[5][8];
+
+
+
+    for (i = 0; i < 5; i++)
+    {
+        for (j = 0; j < 8; j++)
+        {
+            brick[i][j].setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
+            brick[i][j].setHealth(1);
+        }
+    }
 
     // Create a "Text" object called "message". Weird but we will learn about objects soon
     Text hud;
@@ -125,11 +140,11 @@ int main()
     hud.setFont(font);
 
     // Make it really big
-    hud.setCharacterSize(75);
+    hud.setCharacterSize(25);
 
     // Choose a color
     hud.setFillColor(sf::Color::White);
-    hud.setPosition((windowWidth / 2.0f) - 40, 20);
+    hud.setPosition((windowWidth / 2.5f) - 40, 0);
 
     menuMusic.play();
     menuMusic.setLoop(true);
@@ -171,11 +186,40 @@ int main()
             // move right...
             paddle.moveRight(timeElapsed);
         }
+        else if (Keyboard::isKeyPressed(Keyboard::Space)|| Mouse::isButtonPressed(Mouse::Left))
+        {
+            // ball moves
+            if (ball.getPosition().left > 400)
+            {
+                
+                ball.setXVelocity(+50.0f);
+            }
+            if (ball.getPosition().left < 400)
+            {
+                ball.setXVelocity(-50.0f);
+            }
+            ball.setYVelocity(-50.0f);
+            ballStart = true;
+        }
         else if (Keyboard::isKeyPressed(sf::Keyboard::Escape))
         {
             // quit...
             // Someone closed the window- bye
             window.close();
+        }
+        else if (Event::MouseEntered)
+        {
+            if (event.type == Event::MouseMoved)
+            {
+                if (event.mouseMove.x > paddle.getPosition().left + paddle.getPosition().width)
+                {
+                    paddle.moveRight(timeElapsed);
+                }
+                else if (event.mouseMove.x < paddle.getPosition().left)
+                {
+                    paddle.moveLeft(timeElapsed);
+                }
+            }
         }
         // add pause and restart
         /*
@@ -189,6 +233,7 @@ int main()
         if (ball.getPosition().top > windowHeight)
         {
             // reverse the ball direction
+            ballStart = false;
             ball.hitBottom();
 
             // Remove a life
@@ -209,9 +254,6 @@ int main()
         {
             ball.reboundTop();
 
-            // Add a point to the players score
-            score++;
-
         }
 
         // Handle ball hitting sides
@@ -226,6 +268,25 @@ int main()
             // Hit detected so reverse the ball and score a point
             ball.reboundPaddle(paddle.getPosition().left,paddle.getPosition().width);
         }
+
+        // hits bricks
+        for (i = 0; i < 5; i++)
+        {
+            for (j = 0; j < 8; j++)
+            {
+                if (ball.getPosition().intersects(brick[i][j].getPosition()))
+                {
+                    if (brick[i][j].getHealth() > 0) 
+                    {
+                        ball.reboundBrick(brick[i][j].getPosition().top, brick[i][j].getPosition().top + brick[i][j].getPosition().height, brick[i][j].getPosition().left, brick[i][j].getPosition().left + brick[i][j].getPosition().width);
+                        score = score + 10;
+                    }
+                    brick[i][j].hit();
+                    
+                }
+            }
+        }
+
 
         ball.update(timeElapsed);
         paddle.update(timeElapsed);
@@ -245,8 +306,24 @@ int main()
         window.clear(Color(26, 128, 182, 255));
 
         window.draw(paddle.getShape());
+        if (!ballStart)
+        {
+            ball.setPosition(paddle.getPosition().left+(paddle.getPosition().width)/2.0f, windowHeight - 30.0f);
+        }
 
         window.draw(ball.getShape());
+        //window.draw(brick);
+        for (i = 0; i < 5; i++)
+        {
+            for (j = 0; j < 8; j++)
+            {
+                if (brick[i][j].getHealth() > 0) 
+                {
+                    window.draw(brick[i][j].getShape());
+                }
+            }
+        }
+
 
         // Draw our score
         window.draw(hud);

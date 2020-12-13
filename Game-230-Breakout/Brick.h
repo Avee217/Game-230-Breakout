@@ -16,7 +16,10 @@ private:
     float brickSpeed = 0.0f;
 public:
 
-    Brick(float startX, float startY,float health);
+    Brick();
+    void setPosition(float startX, float startY);
+    void setHealth(float health);
+    float getHealth();
 
     //void setSpeed(float speed);
 

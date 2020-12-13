@@ -5,7 +5,7 @@ Paddle::Paddle(float startX, float startY)
 {   
     paddleHeight = 5;
     paddleWidth = 100;
-    position.x = startX-paddleHeight/2.0f;
+    position.x = startX-paddleWidth/2.0f;
     position.y = startY;
     // change speeds
     paddleShape.setSize(sf::Vector2f(100, 5));

@@ -1,7 +1,7 @@
 #include "Menu.h"
 #include<iostream>
 
-
+//Change menu items
 Menu::Menu(float width, float height)
 {
 	if (!font.loadFromFile("Font/DS-DIGIT.ttf"))

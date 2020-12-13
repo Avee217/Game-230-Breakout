@@ -12,8 +12,8 @@ private:
     //change speeds
     RectangleShape ballShape;
 
-    float xVelocity = 50.0f;
-    float yVelocity = 50.0f;
+    float xVelocity = 0.0f;
+    float yVelocity = 0.0f;
     float width = 10.0f;
     float height = 10.0f;
     
@@ -28,10 +28,14 @@ public:
     float getXVelocity();
 
     void reboundSides();
+    void setYVelocity(float speed);
+    void setXVelocity(float speed);
+    void setPosition(float X, float Y);
 
     void reboundPaddle(float paddleX,float paddleWidth);
     void reboundTop();
     void hitBottom();
+    void reboundBrick(float brickTop, float brickBottom, float brickLeft, float brickRight);
 
     void update(float timeElapsed);
     void reset(float startX,float startY);

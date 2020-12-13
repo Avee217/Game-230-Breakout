@@ -3,7 +3,7 @@
 // This the constructor and it is called when we create an object
 Ball::Ball(float startX, float startY)
 {
-    position.x = startX;
+    position.x = startX-width/2.0f;
     position.y = startY;
 
     ballShape.setSize(sf::Vector2f(10, 10));
@@ -24,6 +24,22 @@ float Ball::getXVelocity()
     return xVelocity;
 }
 
+void Ball::setYVelocity(float speed)
+{
+    yVelocity = speed;
+}
+
+void Ball::setXVelocity(float speed)
+{
+    xVelocity = speed;
+}
+
+
+void Ball::setPosition(float X, float Y)
+{
+    position.x = X;
+    position.y = Y;
+}
 void Ball::reboundSides()
 {
     xVelocity = -xVelocity;
@@ -47,8 +63,46 @@ void Ball::reboundTop()
 
 void Ball::hitBottom()
 {
-    position.y = 1;
-    position.x = 500;
+    xVelocity = 0;
+    yVelocity = 0;
+}
+
+void Ball::reboundBrick(float brickTop, float brickBottom, float brickLeft, float brickRight)
+{
+    float ballTop, ballBottom, ballLeft, ballRight;
+    ballTop = getPosition().top;
+    ballBottom = getPosition().top+ getPosition().height;
+    ballLeft = getPosition().left;
+    ballRight = getPosition().left+getPosition().width;
+
+    float distanceX1 = abs(ballRight - brickLeft);
+    float distanceX2 = abs(ballLeft - brickRight);
+    float distanceY1 = abs(ballTop - brickBottom);
+    float distanceY2 = abs(ballBottom - brickTop);
+
+    // From bottom
+    if (yVelocity < 0 && distanceY1 < distanceY2 && distanceY1 < distanceX1 && distanceY1 < distanceX2)
+    {
+        yVelocity = abs(yVelocity);
+    }
+    // From top
+    if (yVelocity > 0 && distanceY2 < distanceY1 && distanceY2 < distanceX1 && distanceY2 < distanceX2)
+    {
+        yVelocity = -abs(yVelocity);
+    }
+    // From left
+    if (xVelocity > 0 && distanceX1 < distanceX2 && distanceX1 < distanceY1 && distanceX1 < distanceY2)
+    {
+        xVelocity = -abs(xVelocity);
+    }
+    // From right
+    if (xVelocity < 0 && distanceX2 < distanceX1 && distanceX2 < distanceY1 && distanceX2 < distanceY2)
+    {
+        xVelocity = abs(xVelocity);
+    }
+
+
+
 }
 
 void Ball::update(float timeElapsed)

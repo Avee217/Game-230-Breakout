@@ -1,24 +1,39 @@
 #include "Brick.h"
 #include<math.h>
 
-Brick::Brick(float startX, float startY,float health)
+Brick::Brick()
 {
 
-    brickHeight = 75;
-    brickWidth = 5;
-    position.x = startX;
-    position.y = startY;
-    brickHealth = health;
-
+    brickHeight = 20;
+    brickWidth = 70;
+    brickHealth = 0;
+  
 
     brickShape.setSize(sf::Vector2f(brickWidth, brickHeight));
+    brickShape.setFillColor(sf::Color::Color(255, 0, 0, 255));
+    //brickShape.setPosition(position);
+}
+void Brick::setPosition(float startX, float startY)
+{
+    position.x = startX;
+    position.y = startY;
     brickShape.setPosition(position);
+
+}
+void Brick::setHealth(float health)
+{
+    brickHealth = health;
+}
+float Brick::getHealth()
+{
+    return brickHealth;
 }
 
 //void Brick::setSpeed(float speed)
 //{
 //    brickSpeed = speed;
 //}
+
 void Brick::changeSize(float width, float height)
 {
     brickWidth = width;

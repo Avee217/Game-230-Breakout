@@ -13,7 +13,7 @@ private:
     // A RectangleShape object
     RectangleShape paddleShape;
 
-    float paddleSpeed = 100.0f;
+    float paddleSpeed = 200.0f;
 
 public:
     Paddle(float startX, float startY);
