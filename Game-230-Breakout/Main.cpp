@@ -65,7 +65,7 @@ int main()
         std::cout << "Bump Sound Error" << std::endl;
     }
     Sound breakSound(breakBuffer);
-    breakSound.setVolume(50);
+    breakSound.setVolume(75);
     
     SoundBuffer lifeLostBuffer;
     if (!lifeLostBuffer.loadFromFile("Sounds/LifeLost.wav")) {
@@ -145,9 +145,9 @@ int main()
         for (j = 0; j < 8; j++)
         {
             brick[i][j].setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
-            brick[i][j].setHealth(1);
+            brick[i][j].setHealth(1,0);
             if (i == 3)
-                brick[i][j].setHealth(2);
+                brick[i][j].setHealth(2,j);
             if (i == 1)
                 brick[i][j].setSpeed(100.0f);
         }
@@ -329,9 +329,9 @@ int main()
                         for (j = 0; j < 8; j++)
                         {
                             brick[i][j].setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
-                            brick[i][j].setHealth(1);
+                            brick[i][j].setHealth(1,0);
                             if (i == 3)
-                                brick[i][j].setHealth(2);
+                                brick[i][j].setHealth(2,j);
                             if (i == 1)
                                 brick[i][j].setSpeed(100.0f);
                         }
@@ -451,8 +451,10 @@ int main()
                                        }
                                     }
                                 }
-                                
-                                brick[i][j].hit();
+                                if (!(i == 3 && (j == 2 || j == 5)))
+                                {
+                                    brick[i][j].hit();
+                                }
                                 
                                 breakSound.play();
                             }

@@ -14,6 +14,7 @@ private:
     Texture brickBrokenTexture;
     Texture brickHeavyTexture;
     Texture brickMovingTexture;
+    Texture brickNoBreakTexture;
     Sprite brickSprite;
 
     RectangleShape brickShape;
@@ -23,7 +24,7 @@ public:
 
     Brick();
     void setPosition(float startX, float startY);
-    void setHealth(float health);
+    void setHealth(float health,int j);
     float getHealth();
 
     //void setSpeed(float speed);

@@ -11,6 +11,7 @@ Brick::Brick()
     brickBrokenTexture.loadFromFile("Sprites/BrickBroken.png");
     brickHeavyTexture.loadFromFile("Sprites/BrickHeavy.png");
     brickMovingTexture.loadFromFile("Sprites/BrickMoving.png");
+    brickNoBreakTexture.loadFromFile("Sprites/BrickNoBreak.png");
 
     //brickSprite.setTexture(brickTexture);
   
@@ -27,12 +28,15 @@ void Brick::setPosition(float startX, float startY)
     brickShape.setPosition(position);
 
 }
-void Brick::setHealth(float health)
+void Brick::setHealth(float health,int j)
 {
     brickHealth = health;
     brickShape.setTexture(&brickTexture);
     if (brickHealth == 2)
         brickShape.setTexture(&brickHeavyTexture);
+    if (j == 2 || j == 5) {
+        brickShape.setTexture(&brickNoBreakTexture);
+    }
 }
 float Brick::getHealth()
 {
