@@ -7,9 +7,10 @@ Brick::Brick()
     brickHeight = 20;
     brickWidth = 70;
     brickHealth = 0;
-    brickTexture.loadFromFile("Sprites/Brick1.png");
+    brickTexture.loadFromFile("Sprites/BrickBasic.png");
     brickBrokenTexture.loadFromFile("Sprites/BrickBroken.png");
-    brickSturdyTexture.loadFromFile("Sprites/Brick.png");
+    brickHeavyTexture.loadFromFile("Sprites/BrickHeavy.png");
+    brickMovingTexture.loadFromFile("Sprites/BrickMoving.png");
 
     //brickSprite.setTexture(brickTexture);
   
@@ -31,7 +32,7 @@ void Brick::setHealth(float health)
     brickHealth = health;
     brickShape.setTexture(&brickTexture);
     if (brickHealth == 2)
-        brickShape.setTexture(&brickSturdyTexture);
+        brickShape.setTexture(&brickHeavyTexture);
 }
 float Brick::getHealth()
 {
@@ -39,10 +40,11 @@ float Brick::getHealth()
 }
 
 
-//void Brick::setSpeed(float speed)
-//{
-//    brickSpeed = speed;
-//}
+void Brick::setSpeed(float speed)
+{
+    brickSpeed = speed;
+    brickShape.setTexture(&brickMovingTexture);
+}
 
 void Brick::changeSize(float width, float height)
 {
@@ -84,12 +86,16 @@ bool Brick::getRenderStatus()
     return true;
 }
 
-//
-//void Brick::update(float timeElapsed)
-//{
-//    position.y += brickSpeed * timeElapsed;
-//    brickShape.setPosition(position);
-//}
+
+void Brick::update(float timeElapsed)
+{
+    position.x += brickSpeed * timeElapsed;
+    brickShape.setPosition(position);
+}
+void Brick::reboundSides()
+{
+    brickSpeed = -brickSpeed;
+}
 
 void Brick::reset(float startX, float startY, float health)
 {

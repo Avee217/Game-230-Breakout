@@ -44,11 +44,14 @@ int main()
     bool resetGame = false;
     bool ballStart = false;
     bool vm = false;
+    bool gom = false;
 
     int score = 0;
     int lives = 3;
     int brickCount = 40;
     float yVelocity = -100.0f;
+    int moveStart = 0;
+    int moveLast = 7;
 
     //Load Sound files Add error checks 
     SoundBuffer bumpBuffer;
@@ -57,6 +60,12 @@ int main()
     }
     Sound bump(bumpBuffer);
     bump.setVolume(50);
+    SoundBuffer breakBuffer;
+    if (!breakBuffer.loadFromFile("Sounds/Break.wav")) {
+        std::cout << "Bump Sound Error" << std::endl;
+    }
+    Sound breakSound(breakBuffer);
+    breakSound.setVolume(50);
     
     SoundBuffer lifeLostBuffer;
     if (!lifeLostBuffer.loadFromFile("Sounds/LifeLost.wav")) {
@@ -91,41 +100,30 @@ int main()
         std::cout << "Menu Music Error" << std::endl;
     }
     victoryMusic.setVolume(25);
+    Music gameOverMusic;
+    if (!gameOverMusic.openFromFile("Music/GameOverMusic.wav")) {
+        std::cout << "Menu Music Error" << std::endl;
+    }
+    gameOverMusic.setVolume(25);
 
     // Load backgound
     Texture texture1;
-    if (!texture1.loadFromFile("Images/pong1.png")) {
+    if (!texture1.loadFromFile("Images/Background.png")) {
         std::cout << "background Image Error" << std::endl;
     }
     Sprite	 background, menuBackGround;
     background.setTexture(texture1);
 
     Texture texture2;
-    if (!texture2.loadFromFile("Images/pong.png")) {
+    if (!texture2.loadFromFile("Images/menu.png")) {
         std::cout << "background 2 Image Error" << std::endl;
     }
     menuBackGround.setTexture(texture2);
-
-    //Load Music
-
-
-    //Load background images
-
-
-    //Load Sprites
-
     
 
     // create a paddle
     Paddle paddle(windowWidth *0.5f, windowHeight - 15.0f);
 
-
-
-    //Texture ballTexture;
-    //if (!ballTexture.loadFromFile("Sprites/Ball.png")) {
-    //    std::cout << " Error" << std::endl;
-    //    //return 0;
-    //}
 
     Ball ball(windowWidth * 0.5f, windowHeight-30.0f);
     ball.setYVelocity(0);
@@ -136,12 +134,7 @@ int main()
     // create bricks
     Brick brick[5][8];
 
-    //Texture brickTexture;
-    //if (!brickTexture.loadFromFile("Images/brick.png")) {
-    //    std::cout << "Sprite Image Error" << std::endl;
-    //    }
-    //Sprite	 brickSprite;
-    //brickSprite.setTexture(brickTexture);
+
 
 
 
@@ -155,6 +148,8 @@ int main()
             brick[i][j].setHealth(1);
             if (i == 3)
                 brick[i][j].setHealth(2);
+            if (i == 1)
+                brick[i][j].setSpeed(100.0f);
         }
     }
 
@@ -226,24 +221,6 @@ int main()
                             break;
 
                         case 2:
-                            std::cout << "Two-Player button has been pressed" << std::endl;
-                            gameRunning = true;
-                            menuMusic.stop();
-                            backgroundMusic.play();
-                            backgroundMusic.setLoop(true);
-                            backgroundMusic.setVolume(50);
-                            break;
-
-                        case 3:
-                            std::cout << "Four-Player button has been pressed" << std::endl;
-                            gameRunning = true;
-                            menuMusic.stop();
-                            backgroundMusic.play();
-                            backgroundMusic.setLoop(true);
-                            backgroundMusic.setVolume(50);
-                            break;
-
-                        case 4:
                             window.close();
                             break;
                         }
@@ -288,7 +265,7 @@ int main()
                     
                 }
             }
-            if (!ballStart)
+            if (!ballStart && !resetGame)
             {
                 if (Keyboard::isKeyPressed(Keyboard::Space) || (Mouse::isButtonPressed(Mouse::Left) && Event::MouseEntered))
                 {
@@ -321,13 +298,18 @@ int main()
 
             if (resetGame)
             {
-                if ((Mouse::isButtonPressed(Mouse::Right) && Event::MouseEntered))
+                if (Keyboard::isKeyPressed(sf::Keyboard::R))
                 {
                     score = 0;
                     lives = 3;
+                    moveStart = 0;
+                    moveLast = 7;
                     resetGame = false;
                     vm = false;
                     victoryMusic.stop();
+                    gom = false;
+                    gameOverMusic.stop();
+
                     if (brickCount <= 0) {
                         yVelocity = -abs(yVelocity) - 25.0f;
                         if (yVelocity > 400)
@@ -339,6 +321,7 @@ int main()
                     backgroundMusic.play();
                     backgroundMusic.setLoop(true);
                     backgroundMusic.setVolume(50);
+                    background.setColor(Color(255, 255, 255, 255));
                     hud.setCharacterSize(20);
                     hud.setPosition((windowWidth / 2.5f) - 40, 0);
                     for (i = 0; i < 5; i++)
@@ -347,6 +330,10 @@ int main()
                         {
                             brick[i][j].setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
                             brick[i][j].setHealth(1);
+                            if (i == 3)
+                                brick[i][j].setHealth(2);
+                            if (i == 1)
+                                brick[i][j].setSpeed(100.0f);
                         }
                     }
                    
@@ -358,7 +345,8 @@ int main()
                     victoryMusic.stop();
                     gameRunning = false;
                     resetGame = false;
-                    //vm = false;
+                    gom = false;
+                    gameOverMusic.stop();
                     hud.setPosition((windowWidth / 2.0f) - 40, 20);
                     background.setColor(sf::Color(255, 255, 255, 255));
                     menuMusic.play();
@@ -371,7 +359,23 @@ int main()
                 *********************************************************************
                 *********************************************************************
             */
+         /*   if (brick[1][moveStart].getPosition().left <= 0 || (brick[1][moveLast].getPosition().left + 70 >= windowWidth))c
+            {
+                for (j = 0; j < 8; j++)
+                {
+                    brick[1][j].reboundSides();
+                    bump.play();
+                }
+            }*/ 
+            for (j = 0; j < 8; j++)
+            {
+                if (brick[1][j].getPosition().left <= 0 || (brick[1][j].getPosition().left + 70 >= windowWidth))
+                {
+                    brick[1][j].reboundSides();
+                }
+            }
             // Handle ball hitting the bottom
+
             if (ballStart)
             {
                 if (ball.getPosition().top > windowHeight)
@@ -396,9 +400,8 @@ int main()
                     }
 
                 }
-           
-
-                // Handle ball hitting top
+               
+                 // Handle ball hitting top
                 if (ball.getPosition().top < 0)
                 {
                     ball.reboundTop();
@@ -407,7 +410,7 @@ int main()
                 }
 
                 // Handle ball hitting sides
-                if (ball.getPosition().left < 0 || ball.getPosition().left + 10 > windowWidth)
+                if (ball.getPosition().left <= 0 || ball.getPosition().left + 10 >= windowWidth)
                 {
                     ball.reboundSides();
                     bump.play();
@@ -435,10 +438,23 @@ int main()
                                 {
                                     score = score + 10;
                                     scoreSound.play();
+                                    brickCount--;
+                                    if (i == 1)
+                                    {
+                                       if(j==moveStart)
+                                       {
+                                           moveStart = moveStart + 1;
+                                       }
+                                       else if (j == moveLast)
+                                       {
+                                           moveLast = moveLast - 1;
+                                       }
+                                    }
                                 }
+                                
                                 brick[i][j].hit();
-                                brickCount--;
-                                bump.play();
+                                
+                                breakSound.play();
                             }
 
 
@@ -451,6 +467,14 @@ int main()
             {
                 ball.update(timeElapsed);
                 paddle.update(timeElapsed);
+                for (j = 0; j < 8; j++)
+                {
+                    if (brick[1][j].getHealth() > 0)
+                    {
+                        brick[1][j].update(timeElapsed);
+                    }
+                }
+            
             }
 
 
@@ -469,7 +493,7 @@ int main()
             
             if (brickCount <= 0 || lives < 1)
             {
-                window.clear(Color(230, 128, 182, 255));
+
                 resetGame = true;
                 ballStart = false;
                 backgroundMusic.stop();
@@ -478,9 +502,11 @@ int main()
             std::stringstream ss;
             if (brickCount <= 0)
             {
-                ss << "Level Cleared.\n Score: " << score << "\n Right to restart with faster speed";
-                hud.setPosition(windowWidth / 2 - 300, windowHeight / 4);
-                hud.setCharacterSize(75);
+                ss << "Level Cleared.\n Score: " << score << "\n Press R to restart";
+                background.setColor(Color(182, 128, 230, 255));
+                window.draw(background);
+                hud.setPosition(windowWidth / 2 - 300, windowHeight / 8);
+                hud.setCharacterSize(65);
                 if (!vm)
                 {
                     victoryMusic.play();
@@ -490,9 +516,17 @@ int main()
             }
             else if (lives < 1)
             {
-                ss << "Game Over.\n Score : " << score;
+                ss << "Game Over.\n Score : " << score<< "\n Press R to restart";
+                background.setColor(Color(230, 128, 182, 255));
+                window.draw(background);
                 hud.setCharacterSize(75);
-                hud.setPosition(windowWidth / 2 - 250, windowHeight / 2);
+                hud.setPosition(windowWidth / 2 - 275, windowHeight / 6); 
+                if (!gom)
+                {
+                    gameOverMusic.play();
+                    gameOverMusic.setVolume(50);
+                }
+                gom = true;
             }
             else
             {
@@ -502,16 +536,16 @@ int main()
             }
             if (!resetGame)
             {
-                //window.draw(paddle.getSprite());
+                
                 window.draw(paddle.getShape());
 
                 if (!ballStart)
                 {
                     ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
                 }
-                //window.draw(ball.getSprite());
+              
                 window.draw(ball.getShape());
-                //ball.Draw(window);
+                
 
                 for (i = 0; i < 5; i++)
                 {
@@ -519,11 +553,9 @@ int main()
                     {
                         if (brick[i][j].getHealth() > 0)
                         {
-                            //window.draw(brick[i][j].getSprite());
+                            
                             window.draw(brick[i][j].getShape());
-                            /* brickSprite.setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
-                             window.draw(brickSprite);*/
-                        }
+                                                   }
                     }
                 }
             }

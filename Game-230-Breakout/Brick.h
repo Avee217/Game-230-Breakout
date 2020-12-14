@@ -12,7 +12,8 @@ private:
     float brickHealth;
     Texture brickTexture;
     Texture brickBrokenTexture;
-    Texture brickSturdyTexture;
+    Texture brickHeavyTexture;
+    Texture brickMovingTexture;
     Sprite brickSprite;
 
     RectangleShape brickShape;
@@ -39,9 +40,11 @@ public:
     Sprite getSprite();
 
     void hit();
+    void setSpeed(float speed);
     
 
-    //void update(float timeElapsed);
+    void reboundSides();
+    void update(float timeElapsed);
     void reset(float startX, float startY,float health);
 
 };
