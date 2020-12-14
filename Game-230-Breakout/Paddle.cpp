@@ -7,11 +7,14 @@ Paddle::Paddle(float startX, float startY)
     paddleWidth = 100;
     position.x = startX-paddleWidth/2.0f;
     position.y = startY;
-    paddleTexture.loadFromFile("Sprites/Paddle.png");
-    paddleSprite.setTexture(paddleTexture);
+    paddle3Texture.loadFromFile("Sprites/Paddle3b.png");
+    paddle2Texture.loadFromFile("Sprites/Paddle2b.png");
+    paddle1Texture.loadFromFile("Sprites/Paddle1b.png");
+    paddleSprite.setTexture(paddle3Texture);
     // change speeds
     paddleShape.setSize(sf::Vector2f(paddleWidth, paddleHeight));
-    paddleShape.setTexture(&paddleTexture);
+    paddleSprite.setScale(sf::Vector2f(paddleWidth, paddleHeight));
+    paddleShape.setTexture(&paddle3Texture);
     paddleShape.setPosition(position);
     paddleSprite.setPosition(position);
 }
@@ -22,6 +25,18 @@ FloatRect Paddle::getPosition()
 
 Sprite Paddle::getSprite() {
     return paddleSprite;
+}
+
+void Paddle::changeTexture(int lives) {
+    if (lives == 3)
+        paddleShape.setTexture(&paddle3Texture);
+
+    if (lives == 2)
+        paddleShape.setTexture(&paddle2Texture);
+
+    if (lives == 1)
+        paddleShape.setTexture(&paddle1Texture);
+
 }
 
 RectangleShape Paddle::getShape()

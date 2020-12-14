@@ -153,6 +153,8 @@ int main()
         {
             brick[i][j].setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
             brick[i][j].setHealth(1);
+            if (i == 3)
+                brick[i][j].setHealth(2);
         }
     }
 
@@ -333,7 +335,7 @@ int main()
                     }
                     brickCount = 40;
                     ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
-                  
+                    paddle.changeTexture(lives);
                     backgroundMusic.play();
                     backgroundMusic.setLoop(true);
                     backgroundMusic.setVolume(50);
@@ -370,68 +372,77 @@ int main()
                 *********************************************************************
             */
             // Handle ball hitting the bottom
-            if (ball.getPosition().top > windowHeight)
+            if (ballStart)
             {
-                // reverse the ball direction
-                if (ballStart)
+                if (ball.getPosition().top > windowHeight)
                 {
-                    lives = lives - 1;
-                }
-
-                ballStart = false;
-                ball.hitBottom();
-                lifeLost.play();
-
-                // Remove a life
-
-
-                // Check for zero lives
-                if (lives < 1) {
-                    resetGame = true;
-                }
-
-            }
-
-            // Handle ball hitting top
-            if (ball.getPosition().top < 0)
-            {
-                ball.reboundTop();
-                bump.play();
-
-            }
-
-            // Handle ball hitting sides
-            if (ball.getPosition().left < 0 || ball.getPosition().left + 10 > windowWidth)
-            {
-                ball.reboundSides();
-                bump.play();
-            }
-
-            // Has the ball hit the paddle?
-            if (ball.getPosition().intersects(paddle.getPosition()))
-            {
-                // Hit detected so reverse the ball and score a point
-                ball.reboundPaddle(paddle.getPosition().left, paddle.getPosition().width);
-                bump.play();
-            }
-
-            // hits bricks
-            for (i = 0; i < 5; i++)
-            {
-                for (j = 0; j < 8; j++)
-                {
-                    if (ball.getPosition().intersects(brick[i][j].getPosition()))
+                    // reverse the ball direction
+                    if (ballStart)
                     {
-                        if (brick[i][j].getHealth() > 0)
+                        lives = lives - 1;
+                    }
+
+                    ballStart = false;
+                    ball.hitBottom();
+                    lifeLost.play();
+                    paddle.changeTexture(lives);
+
+                    // Remove a life
+
+
+                    // Check for zero lives
+                    if (lives < 1) {
+                        resetGame = true;
+                    }
+
+                }
+           
+
+                // Handle ball hitting top
+                if (ball.getPosition().top < 0)
+                {
+                    ball.reboundTop();
+                    bump.play();
+
+                }
+
+                // Handle ball hitting sides
+                if (ball.getPosition().left < 0 || ball.getPosition().left + 10 > windowWidth)
+                {
+                    ball.reboundSides();
+                    bump.play();
+                }
+
+                // Has the ball hit the paddle?
+                if (ball.getPosition().intersects(paddle.getPosition()))
+                {
+                    // Hit detected so reverse the ball and score a point
+                    ball.reboundPaddle(paddle.getPosition().left, paddle.getPosition().width);
+                    bump.play();
+                }
+
+                // hits bricks
+                for (i = 0; i < 5; i++)
+                {
+                    for (j = 0; j < 8; j++)
+                    {
+                        if (ball.getPosition().intersects(brick[i][j].getPosition()))
                         {
-                            ball.reboundBrick(brick[i][j].getPosition().top, brick[i][j].getPosition().top + brick[i][j].getPosition().height, brick[i][j].getPosition().left, brick[i][j].getPosition().left + brick[i][j].getPosition().width);
-                            score = score + 10;
-                            brick[i][j].hit();
-                            brickCount--;
-                            scoreSound.play();
+                            if (brick[i][j].getHealth() > 0)
+                            {
+                                ball.reboundBrick(brick[i][j].getPosition().top, brick[i][j].getPosition().top + brick[i][j].getPosition().height, brick[i][j].getPosition().left, brick[i][j].getPosition().left + brick[i][j].getPosition().width);
+                                if (brick[i][j].getHealth() == 1)
+                                {
+                                    score = score + 10;
+                                    scoreSound.play();
+                                }
+                                brick[i][j].hit();
+                                brickCount--;
+                                bump.play();
+                            }
+
+
                         }
-
-
                     }
                 }
             }
@@ -455,33 +466,7 @@ int main()
     // Clear everything from the last frame
             window.clear(Color(26, 128, 182, 255));
             window.draw(background);
-            if (!resetGame)
-            {
-                //window.draw(paddle.getSprite());
-                window.draw(paddle.getShape());
-
-                if (!ballStart)
-                {
-                    ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
-                }
-                //window.draw(ball.getSprite());
-                window.draw(ball.getShape());
-                //ball.Draw(window);
-
-                for (i = 0; i < 5; i++)
-                {
-                    for (j = 0; j < 8; j++)
-                    {
-                        if (brick[i][j].getHealth() > 0)
-                        {
-                            window.draw(brick[i][j].getShape());
-                           /* brickSprite.setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
-                            window.draw(brickSprite);*/
-                        }
-                    }
-                }
-            }
-
+            
             if (brickCount <= 0 || lives < 1)
             {
                 window.clear(Color(230, 128, 182, 255));
@@ -515,6 +500,34 @@ int main()
                 hud.setCharacterSize(20);
                 hud.setPosition((windowWidth / 2.5f) - 40, 0);
             }
+            if (!resetGame)
+            {
+                //window.draw(paddle.getSprite());
+                window.draw(paddle.getShape());
+
+                if (!ballStart)
+                {
+                    ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
+                }
+                //window.draw(ball.getSprite());
+                window.draw(ball.getShape());
+                //ball.Draw(window);
+
+                for (i = 0; i < 5; i++)
+                {
+                    for (j = 0; j < 8; j++)
+                    {
+                        if (brick[i][j].getHealth() > 0)
+                        {
+                            //window.draw(brick[i][j].getSprite());
+                            window.draw(brick[i][j].getShape());
+                            /* brickSprite.setPosition(80.0f * (j + 1.0f), 25.0f * (i + 1.0f));
+                             window.draw(brickSprite);*/
+                        }
+                    }
+                }
+            }
+
 
             hud.setString(ss.str());
             // Draw our score

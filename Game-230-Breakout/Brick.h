@@ -10,7 +10,9 @@ private:
     float brickHeight;
     float brickWidth;
     float brickHealth;
-    //Texture brickTexture;
+    Texture brickTexture;
+    Texture brickBrokenTexture;
+    Texture brickSturdyTexture;
     Sprite brickSprite;
 
     RectangleShape brickShape;
@@ -34,8 +36,10 @@ public:
     void changeSize(float width, float height);
 
     RectangleShape getShape();
+    Sprite getSprite();
 
     void hit();
+    
 
     //void update(float timeElapsed);
     void reset(float startX, float startY,float health);

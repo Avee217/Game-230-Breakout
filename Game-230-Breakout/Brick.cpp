@@ -7,13 +7,16 @@ Brick::Brick()
     brickHeight = 20;
     brickWidth = 70;
     brickHealth = 0;
-    //brickTexture.loadFromFile("Sprites/Brick.png");
+    brickTexture.loadFromFile("Sprites/Brick1.png");
+    brickBrokenTexture.loadFromFile("Sprites/BrickBroken.png");
+    brickSturdyTexture.loadFromFile("Sprites/Brick.png");
+
     //brickSprite.setTexture(brickTexture);
   
 
     brickShape.setSize(sf::Vector2f(brickWidth, brickHeight));
-    brickShape.setFillColor(sf::Color::Color(255, 0, 0, 255));
-    //brickShape.setTexture(&brickTexture);
+    //brickShape.setFillColor(sf::Color::Color(255, 0, 0, 255));
+    
     brickShape.setPosition(position);
 }
 void Brick::setPosition(float startX, float startY)
@@ -26,6 +29,9 @@ void Brick::setPosition(float startX, float startY)
 void Brick::setHealth(float health)
 {
     brickHealth = health;
+    brickShape.setTexture(&brickTexture);
+    if (brickHealth == 2)
+        brickShape.setTexture(&brickSturdyTexture);
 }
 float Brick::getHealth()
 {
@@ -56,9 +62,16 @@ RectangleShape Brick::getShape()
     return brickShape;
 }
 
+Sprite Brick::getSprite()
+{
+    return brickSprite;
+}
+
 void Brick::hit()
 {
     brickHealth--;
+    if (brickHealth == 1)
+        brickShape.setTexture(&brickBrokenTexture);
 
 }
 

@@ -16,7 +16,7 @@ private:
     float yVelocity = 0.0f;
     float width = 15.0f;
     float height = 15.0f;
-    //Texture ballTexture;
+    Texture ballTexture;
     Sprite ballSprite;
 
 

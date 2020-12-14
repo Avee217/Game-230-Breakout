@@ -5,9 +5,9 @@ Ball::Ball(float startX, float startY)
 {
     position.x = startX-width/2.0f;
     position.y = startY;
-    //ballTexture.loadFromFile("Sprites/Ball.png");
+    ballTexture.loadFromFile("Sprites/Ball.png");
     //ballSprite.setTexture(ballTexture);
-    //ballShape.setTexture(&ballTexture);
+    ballShape.setTexture(&ballTexture);
 
 
     ballShape.setSize(sf::Vector2f(height, width));

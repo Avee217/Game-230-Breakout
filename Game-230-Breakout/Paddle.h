@@ -9,7 +9,9 @@ private:
     Vector2f position;
     float paddleHeight;
     float paddleWidth;
-    Texture paddleTexture;
+    Texture paddle1Texture;
+    Texture paddle2Texture;
+    Texture paddle3Texture;
     Sprite paddleSprite;
 
     // A RectangleShape object
@@ -24,6 +26,7 @@ public:
 
     FloatRect getPosition();
     Sprite getSprite();
+    void changeTexture(int lives);
 
     RectangleShape getShape();
 
