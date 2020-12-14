@@ -15,37 +15,20 @@ private:
     Texture brickHeavyTexture;
     Texture brickMovingTexture;
     Texture brickNoBreakTexture;
-    Sprite brickSprite;
-
     RectangleShape brickShape;
-
     float brickSpeed = 0.0f;
+
 public:
 
     Brick();
     void setPosition(float startX, float startY);
     void setHealth(float health,int j);
-    float getHealth();
-
-    //void setSpeed(float speed);
-
-
-    FloatRect getPosition();
-
-    bool getRenderStatus();
-
-
-    void changeSize(float width, float height);
-
-    RectangleShape getShape();
-    Sprite getSprite();
-
-    void hit();
     void setSpeed(float speed);
-    
-
+    float getHealth();
+    FloatRect getPosition();
+    RectangleShape getShape();
+    void hit();  
     void reboundSides();
     void update(float timeElapsed);
     void reset(float startX, float startY,float health);
-
 };

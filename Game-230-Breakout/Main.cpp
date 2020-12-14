@@ -1,4 +1,3 @@
-// These "include" code from the C++ library and SFML too
 #include "Paddle.h"
 #include "Ball.h"
 #include"Brick.h"
@@ -15,11 +14,8 @@
 #include <SFML/Main.hpp>
 #include<chrono>
 
-
-// Avoid having to put sf in front of all the SFML classes and functions
 using namespace sf;
 
-// This is where our game starts from
 int main()
 {
     float windowWidth = 800;
@@ -48,10 +44,8 @@ int main()
 
     int score = 0;
     int lives = 3;
-    int brickCount = 40;
+    int brickCount = 38;    // Number of bricks you can break
     float yVelocity = -100.0f;
-    int moveStart = 0;
-    int moveLast = 7;
 
     //Load Sound files Add error checks 
     SoundBuffer bumpBuffer;
@@ -60,6 +54,7 @@ int main()
     }
     Sound bump(bumpBuffer);
     bump.setVolume(50);
+
     SoundBuffer breakBuffer;
     if (!breakBuffer.loadFromFile("Sounds/Break.wav")) {
         std::cout << "Bump Sound Error" << std::endl;
@@ -88,7 +83,6 @@ int main()
     }
     backgroundMusic.setVolume(25);
 
-
     Music menuMusic;
     if (!menuMusic.openFromFile("Music/MenuMusic.wav")) {
         std::cout << "Menu Music Error" << std::endl;
@@ -100,6 +94,7 @@ int main()
         std::cout << "Menu Music Error" << std::endl;
     }
     victoryMusic.setVolume(25);
+
     Music gameOverMusic;
     if (!gameOverMusic.openFromFile("Music/GameOverMusic.wav")) {
         std::cout << "Menu Music Error" << std::endl;
@@ -119,27 +114,17 @@ int main()
         std::cout << "background 2 Image Error" << std::endl;
     }
     menuBackGround.setTexture(texture2);
-    
 
     // create a paddle
     Paddle paddle(windowWidth *0.5f, windowHeight - 15.0f);
 
-
+    // create a ball
     Ball ball(windowWidth * 0.5f, windowHeight-30.0f);
     ball.setYVelocity(0);
     ball.setXVelocity(0);
-
-
     
     // create bricks
     Brick brick[5][8];
-
-
-
-
-
-
-
     for (i = 0; i < 5; i++)
     {
         for (j = 0; j < 8; j++)
@@ -152,48 +137,34 @@ int main()
                 brick[i][j].setSpeed(100.0f);
         }
     }
-
-    // Create a "Text" object called "message". Weird but we will learn about objects soon
+    
+    // create HUD
     Text hud;
 
-    // We need to choose a font
     Font font;
-    // dafont.com - error check
+    // dafont.com 
     font.loadFromFile("Font/DS-DIGIT.ttf");
-
-    // Set the font to our message
     hud.setFont(font);
-
-    // Make it really big
     hud.setCharacterSize(25);
-
-    // Choose a color
     hud.setFillColor(sf::Color::White);
     hud.setPosition((windowWidth / 2.5f) - 40, 0);
 
     menuMusic.play();
     menuMusic.setLoop(true);
 
-    
-    // This "while" loop goes round and round- perhaps forever
+    //Start
     while (window.isOpen())
-    {   //Check if menu screen
-        /*
-            Handle the player input
-            *********************************************************************
-            *********************************************************************
-            *********************************************************************
-        */
-
-        // Handle Player Input
+    {
+        //Time
         clockEnd = std::chrono::steady_clock::now();
         timeElapsed = std::chrono::duration_cast<std::chrono::microseconds>(clockEnd - clockStart).count() / 1000000.0f;
         clockStart = clockEnd;
 
+        //Event
         Event event;
         while (window.pollEvent(event))
         {
-            if (!gameRunning)
+            if (!gameRunning)//Check if in menu
             {
                 switch (event.type)
                 {
@@ -212,7 +183,7 @@ int main()
                         switch (menu.GetPressedItem())
                         {
                         case 1:
-                            std::cout << "Single player has been pressed" << std::endl;
+                            std::cout << "Play has been pressed" << std::endl;
                             gameRunning = true;
                             menuMusic.stop();
                             backgroundMusic.play();
@@ -234,11 +205,13 @@ int main()
                 }
             }
         }
+        
+        // Not in menu
         if (gameRunning)
         {
-
-            //not in menu
             if (event.type == Event::Closed) window.close();
+            
+            //Keyboard Inputs
             if (Keyboard::isKeyPressed(Keyboard::Left))
             {
                 // move left...
@@ -250,6 +223,7 @@ int main()
                 paddle.moveRight(timeElapsed);
             }
 
+            //Mouse Inputs
             if (Event::MouseEntered)
             {
                 if (event.type == Event::MouseMoved)
@@ -265,6 +239,8 @@ int main()
                     
                 }
             }
+
+            //Ball is not moving and not waiting to reset game -> move the ball
             if (!ballStart && !resetGame)
             {
                 if (Keyboard::isKeyPressed(Keyboard::Space) || (Mouse::isButtonPressed(Mouse::Left) && Event::MouseEntered))
@@ -290,32 +266,40 @@ int main()
                 // Someone closed the window- bye
                 window.close();
             }
-            //Pausing
+
+            //Pause
             if (Keyboard::isKeyPressed(Keyboard::P))
             {
                 pause = !pause;
             }
 
+            // If resetting the game
             if (resetGame)
             {
                 if (Keyboard::isKeyPressed(sf::Keyboard::R))
                 {
-                    score = 0;
+                    
                     lives = 3;
-                    moveStart = 0;
-                    moveLast = 7;
                     resetGame = false;
                     vm = false;
                     victoryMusic.stop();
                     gom = false;
                     gameOverMusic.stop();
 
-                    if (brickCount <= 0) {
+                    //Cleared 
+                    if (brickCount <= 0)
+                    {
                         yVelocity = -abs(yVelocity) - 25.0f;
                         if (yVelocity > 400)
                             yVelocity = 400;
                     }
-                    brickCount = 40;
+                    // Gave over
+                    else
+                    {
+                        score = 0;
+                    }
+                    brickCount = 38;
+                    ball.setYVelocity(0);
                     ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
                     paddle.changeTexture(lives);
                     backgroundMusic.play();
@@ -338,6 +322,8 @@ int main()
                     }
                    
                 }
+
+                //Quit
                 if (Keyboard::isKeyPressed(Keyboard::Q))
                 {
                     score = 0;
@@ -353,20 +339,8 @@ int main()
                 }
 
             }
-            /*
-                Update the frame
-                *********************************************************************
-                *********************************************************************
-                *********************************************************************
-            */
-         /*   if (brick[1][moveStart].getPosition().left <= 0 || (brick[1][moveLast].getPosition().left + 70 >= windowWidth))c
-            {
-                for (j = 0; j < 8; j++)
-                {
-                    brick[1][j].reboundSides();
-                    bump.play();
-                }
-            }*/ 
+
+            //Brick movement
             for (j = 0; j < 8; j++)
             {
                 if (brick[1][j].getPosition().left <= 0 || (brick[1][j].getPosition().left + 70 >= windowWidth))
@@ -374,57 +348,46 @@ int main()
                     brick[1][j].reboundSides();
                 }
             }
-            // Handle ball hitting the bottom
 
+            //Ball Collisions
             if (ballStart)
             {
-                if (ball.getPosition().top > windowHeight)
+                if (ball.getPosition().top > windowHeight) //Bottom
                 {
-                    // reverse the ball direction
                     if (ballStart)
                     {
                         lives = lives - 1;
                     }
-
                     ballStart = false;
                     ball.hitBottom();
                     lifeLost.play();
                     paddle.changeTexture(lives);
-
-                    // Remove a life
-
-
-                    // Check for zero lives
                     if (lives < 1) {
                         resetGame = true;
                     }
 
                 }
-               
-                 // Handle ball hitting top
-                if (ball.getPosition().top < 0)
+            
+                if (ball.getPosition().top < 0) //top
                 {
                     ball.reboundTop();
                     bump.play();
 
                 }
 
-                // Handle ball hitting sides
-                if (ball.getPosition().left <= 0 || ball.getPosition().left + 10 >= windowWidth)
+                if (ball.getPosition().left <= 0 || ball.getPosition().left + 10 >= windowWidth) //sides
                 {
                     ball.reboundSides();
                     bump.play();
                 }
 
-                // Has the ball hit the paddle?
-                if (ball.getPosition().intersects(paddle.getPosition()))
+                if (ball.getPosition().intersects(paddle.getPosition())) //Paddle
                 {
-                    // Hit detected so reverse the ball and score a point
                     ball.reboundPaddle(paddle.getPosition().left, paddle.getPosition().width);
                     bump.play();
                 }
 
-                // hits bricks
+                // Collision with bricks
                 for (i = 0; i < 5; i++)
                 {
                     for (j = 0; j < 8; j++)
@@ -439,32 +402,18 @@ int main()
                                     score = score + 10;
                                     scoreSound.play();
                                     brickCount--;
-                                    if (i == 1)
-                                    {
-                                       if(j==moveStart)
-                                       {
-                                           moveStart = moveStart + 1;
-                                       }
-                                       else if (j == moveLast)
-                                       {
-                                           moveLast = moveLast - 1;
-                                       }
-                                    }
                                 }
                                 if (!(i == 3 && (j == 2 || j == 5)))
                                 {
                                     brick[i][j].hit();
                                 }
-                                
                                 breakSound.play();
                             }
-
-
                         }
                     }
                 }
             }
-
+            //Update ball, brick and paddle
             if (!pause && !resetGame)
             {
                 ball.update(timeElapsed);
@@ -478,21 +427,10 @@ int main()
                 }
             
             }
-
-
-
-
-            /*
-       Draw the frame
-       *********************************************************************
-       *********************************************************************
-       *********************************************************************
-    */
-
-    // Clear everything from the last frame
+            //Draw
+            // Clear everything from the last frame
             window.clear(Color(26, 128, 182, 255));
             window.draw(background);
-            
             if (brickCount <= 0 || lives < 1)
             {
 
@@ -536,18 +474,18 @@ int main()
                 hud.setCharacterSize(20);
                 hud.setPosition((windowWidth / 2.5f) - 40, 0);
             }
+
             if (!resetGame)
             {
-                
                 window.draw(paddle.getShape());
 
                 if (!ballStart)
                 {
+                    ball.setYVelocity(0);
                     ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
                 }
-              
+
                 window.draw(ball.getShape());
-                
 
                 for (i = 0; i < 5; i++)
                 {
@@ -555,29 +493,21 @@ int main()
                     {
                         if (brick[i][j].getHealth() > 0)
                         {
-                            
+
                             window.draw(brick[i][j].getShape());
-                                                   }
+                        }
                     }
                 }
             }
-
-
             hud.setString(ss.str());
-            // Draw our score
             window.draw(hud);
-
-            // Show everything we just drew
             window.display();
         }
         if (!gameRunning)
         {
-
             window.clear();
             window.draw(menuBackGround);
-
             menu.draw(window);
-
             window.display();
         }
 

@@ -2,8 +2,7 @@
 #include<math.h>
 
 Brick::Brick()
-{
-
+{   
     brickHeight = 20;
     brickWidth = 70;
     brickHealth = 0;
@@ -12,22 +11,17 @@ Brick::Brick()
     brickHeavyTexture.loadFromFile("Sprites/BrickHeavy.png");
     brickMovingTexture.loadFromFile("Sprites/BrickMoving.png");
     brickNoBreakTexture.loadFromFile("Sprites/BrickNoBreak.png");
-
-    //brickSprite.setTexture(brickTexture);
-  
-
-    brickShape.setSize(sf::Vector2f(brickWidth, brickHeight));
-    //brickShape.setFillColor(sf::Color::Color(255, 0, 0, 255));
-    
+    brickShape.setSize(sf::Vector2f(brickWidth, brickHeight));    
     brickShape.setPosition(position);
 }
+
 void Brick::setPosition(float startX, float startY)
 {
     position.x = startX;
     position.y = startY;
     brickShape.setPosition(position);
-
 }
+
 void Brick::setHealth(float health,int j)
 {
     brickHealth = health;
@@ -38,11 +32,6 @@ void Brick::setHealth(float health,int j)
         brickShape.setTexture(&brickNoBreakTexture);
     }
 }
-float Brick::getHealth()
-{
-    return brickHealth;
-}
-
 
 void Brick::setSpeed(float speed)
 {
@@ -50,12 +39,9 @@ void Brick::setSpeed(float speed)
     brickShape.setTexture(&brickMovingTexture);
 }
 
-void Brick::changeSize(float width, float height)
+float Brick::getHealth()
 {
-    brickWidth = width;
-    brickHeight = height;
-   
-    brickShape.setSize(sf::Vector2f(brickWidth, brickHeight));
+    return brickHealth;
 }
 
 FloatRect Brick::getPosition()
@@ -68,11 +54,6 @@ RectangleShape Brick::getShape()
     return brickShape;
 }
 
-Sprite Brick::getSprite()
-{
-    return brickSprite;
-}
-
 void Brick::hit()
 {
     brickHealth--;
@@ -81,24 +62,15 @@ void Brick::hit()
 
 }
 
-bool Brick::getRenderStatus()
+void Brick::reboundSides()
 {
-    if (brickHealth == 0)
-    {
-        return false;
-    }
-    return true;
+    brickSpeed = -brickSpeed;
 }
-
 
 void Brick::update(float timeElapsed)
 {
     position.x += brickSpeed * timeElapsed;
     brickShape.setPosition(position);
-}
-void Brick::reboundSides()
-{
-    brickSpeed = -brickSpeed;
 }
 
 void Brick::reset(float startX, float startY, float health)
