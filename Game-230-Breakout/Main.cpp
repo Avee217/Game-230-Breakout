@@ -265,12 +265,28 @@ int main()
                 // move left...
                 paddle.moveLeft(timeElapsed);
             }
-            else if (Keyboard::isKeyPressed(Keyboard::Right))
+            if (Keyboard::isKeyPressed(Keyboard::Right))
             {
                 // move right...
                 paddle.moveRight(timeElapsed);
             }
-            else if (!ballStart)
+
+            if (Event::MouseEntered)
+            {
+                if (event.type == Event::MouseMoved)
+                {
+                    if (event.mouseMove.x > paddle.getPosition().left + paddle.getPosition().width)
+                    {
+                        paddle.moveRight(timeElapsed);
+                    }
+                    else if (event.mouseMove.x < paddle.getPosition().left)
+                    {
+                        paddle.moveLeft(timeElapsed);
+                    }
+                    
+                }
+            }
+            if (!ballStart)
             {
                 if (Keyboard::isKeyPressed(Keyboard::Space) || (Mouse::isButtonPressed(Mouse::Left) && Event::MouseEntered))
                 {
@@ -288,25 +304,12 @@ int main()
                     ballStart = true;
                 }
             }
-            else if (Keyboard::isKeyPressed(sf::Keyboard::Escape))
+
+            if (Keyboard::isKeyPressed(sf::Keyboard::Escape))
             {
                 // quit...
                 // Someone closed the window- bye
                 window.close();
-            }
-            else if (Event::MouseEntered)
-            {
-                if (event.type == Event::MouseMoved)
-                {
-                    if (event.mouseMove.x > paddle.getPosition().left + paddle.getPosition().width)
-                    {
-                        paddle.moveRight(timeElapsed);
-                    }
-                    else if (event.mouseMove.x < paddle.getPosition().left)
-                    {
-                        paddle.moveLeft(timeElapsed);
-                    }
-                }
             }
             //Pausing
             if (Keyboard::isKeyPressed(Keyboard::P))
@@ -330,6 +333,12 @@ int main()
                     }
                     brickCount = 40;
                     ball.setPosition(paddle.getPosition().left + ((paddle.getPosition().width) / 2.0f) - 5.0f, windowHeight - 30.0f);
+                  
+                    backgroundMusic.play();
+                    backgroundMusic.setLoop(true);
+                    backgroundMusic.setVolume(50);
+                    hud.setCharacterSize(20);
+                    hud.setPosition((windowWidth / 2.5f) - 40, 0);
                     for (i = 0; i < 5; i++)
                     {
                         for (j = 0; j < 8; j++)
@@ -338,10 +347,6 @@ int main()
                             brick[i][j].setHealth(1);
                         }
                     }
-                    backgroundMusic.play();
-                    backgroundMusic.setLoop(true);
-                    hud.setCharacterSize(20);
-                    hud.setPosition((windowWidth / 2.5f) - 40, 0);
                    
                 }
                 if (Keyboard::isKeyPressed(Keyboard::Q))
